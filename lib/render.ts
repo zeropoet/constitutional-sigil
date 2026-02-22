@@ -31,7 +31,7 @@ function drawAbsoluteAxis(ctx: CanvasRenderingContext2D): void {
 
 function drawEnergyRings(ctx: CanvasRenderingContext2D, time: number): void {
   for (let r = 30; r <= 280; r += 18) {
-    const offset = energy(r * 0.01, time) * 8
+    const offset = energy(r, 0, time) * 8
     ctx.beginPath()
     ctx.arc(0, 0, r + offset, 0, Math.PI * 2)
     ctx.strokeStyle = "rgba(125,170,255,0.30)"

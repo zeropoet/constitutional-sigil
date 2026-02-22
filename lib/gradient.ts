@@ -12,8 +12,7 @@ export function gradientVectors(time: number): GradientVector[] {
 
   for (let x = -250; x <= 250; x += 50) {
     for (let y = -250; y <= 250; y += 50) {
-      const r = Math.sqrt(x * x + y * y) * 0.01
-      const e = energy(r, time)
+      const e = energy(x, y, time)
       const angle = Math.atan2(y, x)
 
       vectors.push({

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react"
 
+import { energy } from "@/lib/energy"
+
 export default function SigilCanvas() {
   const ref = useRef<HTMLCanvasElement>(null)
 
@@ -14,14 +16,6 @@ export default function SigilCanvas() {
     const cy = height / 2
 
     let t = 0
-
-    function energy(r: number, time: number) {
-      return Math.sin(6 * r - 2 * time)
-    }
-
-    function dEnergyDr(r: number, time: number) {
-      return 6 * Math.cos(6 * r - 2 * time)
-    }
 
     function render() {
       t += 0.008
@@ -65,8 +59,7 @@ export default function SigilCanvas() {
       ctx.lineWidth = 1
 
       for (let r = 40; r < 280; r += 30) {
-        const scaledR = r * 0.01
-        const e = energy(scaledR, time)
+        const e = energy(r, 0, time)
         ctx.beginPath()
         ctx.arc(0, 0, r + e * 6, 0, Math.PI * 2)
         ctx.stroke()
@@ -77,19 +70,14 @@ export default function SigilCanvas() {
       ctx.strokeStyle = "rgba(0,0,0,0.15)"
       ctx.lineWidth = 1
 
+      const eps = 1
       for (let x = -240; x <= 240; x += 60) {
         for (let y = -240; y <= 240; y += 60) {
-          const r = Math.sqrt(x * x + y * y)
-          if (r === 0) continue
+          const gx = (energy(x + eps, y, time) - energy(x - eps, y, time)) / (2 * eps)
+          const gy = (energy(x, y + eps, time) - energy(x, y - eps, time)) / (2 * eps)
 
-          const scaledR = r * 0.01
-          const dE = dEnergyDr(scaledR, time)
-
-          const nx = x / r
-          const ny = y / r
-
-          const dx = -nx * dE * 4
-          const dy = -ny * dE * 4
+          const dx = -gx * 28
+          const dy = -gy * 28
 
           ctx.beginPath()
           ctx.moveTo(x, y)
@@ -107,9 +95,10 @@ export default function SigilCanvas() {
 
       for (let a = 0; a < Math.PI * 4; a += 0.05) {
         const baseR = 20 + a * 18
-        const scaledR = baseR * 0.01
-        const e = energy(scaledR, time)
-        const logistic = e / (1 + Math.abs(e)) * 20
+        const baseX = Math.cos(a) * baseR
+        const baseY = Math.sin(a) * baseR
+        const e = energy(baseX, baseY, time)
+        const logistic = (e / (1 + Math.abs(e))) * 20
 
         const x = Math.cos(a) * (baseR + logistic)
         const y = Math.sin(a) * (baseR + logistic)
@@ -120,7 +109,6 @@ export default function SigilCanvas() {
 
       ctx.stroke()
 
-      // Mirror spiral
       ctx.save()
       ctx.scale(-1, 1)
       ctx.stroke()

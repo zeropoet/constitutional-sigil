@@ -5,8 +5,13 @@ export type SpiralPoint = {
   y: number
 }
 
-export function logisticRadius(r: number, time: number, max = 70): number {
-  const e = energy(r, time)
+export function logisticRadius(
+  x: number,
+  y: number,
+  time: number,
+  max = 70
+): number {
+  const e = energy(x, y, time)
   return max * (Math.exp(e) / (1 + Math.exp(e)))
 }
 
@@ -15,7 +20,9 @@ export function spiralPoints(time: number): SpiralPoint[] {
 
   for (let a = 0; a <= Math.PI * 5; a += 0.04) {
     const base = 12 + a * 16
-    const radial = base + logisticRadius(base * 0.01, time)
+    const bx = Math.cos(a) * base
+    const by = Math.sin(a) * base
+    const radial = base + logisticRadius(bx, by, time)
     points.push({
       x: Math.cos(a) * radial,
       y: Math.sin(a) * radial
