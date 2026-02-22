@@ -1,4 +1,4 @@
-import { energy } from "@/lib/energy"
+import { createEnergy } from "@/lib/energy"
 
 export type GradientVector = {
   x: number
@@ -6,6 +6,8 @@ export type GradientVector = {
   dx: number
   dy: number
 }
+
+const energy = createEnergy(0)
 
 export function gradientVectors(time: number): GradientVector[] {
   const vectors: GradientVector[] = []

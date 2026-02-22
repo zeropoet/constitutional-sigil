@@ -1,10 +1,11 @@
-import { energy } from "@/lib/energy"
+import { createEnergy } from "@/lib/energy"
 import { gradientVectors } from "@/lib/gradient"
 import { spiralPoints } from "@/lib/spiral"
 
 const CANVAS_SIZE = 800
 const BOUNDARY_RADIUS = 320
 const ANCHOR_OFFSET = 150
+const energy = createEnergy(0)
 
 function drawAbsoluteAxis(ctx: CanvasRenderingContext2D): void {
   ctx.strokeStyle = "rgba(255,255,255,0.12)"

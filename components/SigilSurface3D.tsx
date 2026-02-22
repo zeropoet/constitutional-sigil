@@ -4,9 +4,13 @@ import { useEffect, useRef } from "react"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 
-import { energy } from "@/lib/energy"
+import { createEnergy } from "@/lib/energy"
 
-export default function SigilSurface3D() {
+type SigilSurface3DProps = {
+  seed: number
+}
+
+export default function SigilSurface3D({ seed }: SigilSurface3DProps) {
   const mountRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -17,6 +21,7 @@ export default function SigilSurface3D() {
     const height = 800
     const radius = 160
     const segments = 200
+    const energy = createEnergy(seed)
 
     const scene = new THREE.Scene()
     scene.background = new THREE.Color(0xffffff)
@@ -115,7 +120,7 @@ export default function SigilSurface3D() {
         mountEl.removeChild(renderer.domElement)
       }
     }
-  }, [])
+  }, [seed])
 
   return <div ref={mountRef} />
 }

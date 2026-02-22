@@ -1,12 +1,18 @@
-export function energy(x: number, y: number, time: number) {
-  const r = Math.sqrt(x * x + y * y)
-  const theta = Math.atan2(y, x)
+import { buildConstitution } from "./constitution"
 
-  const radial = Math.sin(6 * (r * 0.05) - 2 * time)
-  const angular = 0.25 * Math.cos(6 * theta)
+export function createEnergy(seed: number) {
+  const C = buildConstitution(seed)
 
-  const anchor1 = Math.exp(-0.02 * ((x + 80) * (x + 80) + y * y))
-  const anchor2 = Math.exp(-0.02 * ((x - 80) * (x - 80) + y * y))
+  return function energy(x: number, y: number, time: number) {
+    const r = Math.sqrt(x * x + y * y)
+    const theta = Math.atan2(y, x)
 
-  return radial + angular - 1.2 * (anchor1 + anchor2)
+    const radial = Math.sin(C.radialFreq * (r * C.radialScale) - C.timeScale * time)
+    const angular = 0.25 * Math.cos(C.angularFreq * theta)
+
+    const anchor1 = Math.exp(-C.anchorSpread * ((x + 80) * (x + 80) + y * y))
+    const anchor2 = Math.exp(-C.anchorSpread * ((x - 80) * (x - 80) + y * y))
+
+    return radial + angular - C.anchorStrength * (anchor1 + anchor2)
+  }
 }

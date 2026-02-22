@@ -1,9 +1,11 @@
-import { energy } from "@/lib/energy"
+import { createEnergy } from "@/lib/energy"
 
 export type SpiralPoint = {
   x: number
   y: number
 }
+
+const energy = createEnergy(0)
 
 export function logisticRadius(
   x: number,

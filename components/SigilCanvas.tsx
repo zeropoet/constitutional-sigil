@@ -2,9 +2,13 @@
 
 import { useEffect, useRef } from "react"
 
-import { energy } from "@/lib/energy"
+import { createEnergy } from "@/lib/energy"
 
-export default function SigilCanvas() {
+type SigilCanvasProps = {
+  seed: number
+}
+
+export default function SigilCanvas({ seed }: SigilCanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -14,8 +18,10 @@ export default function SigilCanvas() {
     const height = canvas.height
     const cx = width / 2
     const cy = height / 2
+    const energy = createEnergy(seed)
 
     let t = 0
+    let rafId = 0
 
     function render() {
       t += 0.008
@@ -36,7 +42,7 @@ export default function SigilCanvas() {
 
       ctx.restore()
 
-      requestAnimationFrame(render)
+      rafId = requestAnimationFrame(render)
     }
 
     function drawAxes(ctx: CanvasRenderingContext2D) {
@@ -137,7 +143,11 @@ export default function SigilCanvas() {
     }
 
     render()
-  }, [])
+
+    return () => {
+      cancelAnimationFrame(rafId)
+    }
+  }, [seed])
 
   return <canvas ref={ref} width={800} height={800} />
 }
