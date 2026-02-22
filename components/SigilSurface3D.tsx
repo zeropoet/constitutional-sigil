@@ -24,7 +24,7 @@ export default function SigilSurface3D({ seed }: SigilSurface3DProps) {
     const scene = new THREE.Scene()
     scene.background = new THREE.Color(0xffffff)
 
-    const viewHalf = 320
+    const viewHalf = 214
     const camera = new THREE.OrthographicCamera(
       -viewHalf,
       viewHalf,

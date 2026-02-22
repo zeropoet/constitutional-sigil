@@ -66,8 +66,8 @@ export default function SigilCanvas({ seed }: SigilCanvasProps) {
     }
 
     function drawAxes(ctx: CanvasRenderingContext2D) {
-      ctx.strokeStyle = "rgba(0,0,0,0.08)"
-      ctx.lineWidth = 1
+      ctx.strokeStyle = "rgba(0,0,0,0.16)"
+      ctx.lineWidth = 1.2
 
       ctx.beginPath()
       ctx.moveTo(-350, 0)
@@ -81,20 +81,26 @@ export default function SigilCanvas({ seed }: SigilCanvasProps) {
     }
 
     function drawEnergyRings(ctx: CanvasRenderingContext2D, time: number) {
-      ctx.strokeStyle = "rgba(0,0,0,0.25)"
-      ctx.lineWidth = 1
+      ctx.strokeStyle = "rgba(0,0,0,0.38)"
+      ctx.lineWidth = 1.2
 
       for (let r = 40; r < 280; r += 30) {
         const e = energy(r, 0, time)
         ctx.beginPath()
         ctx.arc(0, 0, r + e * 6, 0, Math.PI * 2)
         ctx.stroke()
+
+        ctx.strokeStyle = "rgba(35,78,132,0.18)"
+        ctx.lineWidth = 0.9
+        ctx.stroke()
+        ctx.strokeStyle = "rgba(0,0,0,0.38)"
+        ctx.lineWidth = 1.2
       }
     }
 
     function drawGradientField(ctx: CanvasRenderingContext2D, time: number) {
-      ctx.strokeStyle = "rgba(0,0,0,0.15)"
-      ctx.lineWidth = 1
+      ctx.strokeStyle = "rgba(0,0,0,0.24)"
+      ctx.lineWidth = 1.1
 
       const eps = 1
       for (let x = -240; x <= 240; x += 60) {
@@ -114,8 +120,8 @@ export default function SigilCanvas({ seed }: SigilCanvasProps) {
     }
 
     function drawSpiral(ctx: CanvasRenderingContext2D, time: number) {
-      ctx.strokeStyle = "rgba(0,0,0,0.35)"
-      ctx.lineWidth = 1
+      ctx.strokeStyle = "rgba(0,0,0,0.52)"
+      ctx.lineWidth = 1.3
 
       ctx.beginPath()
 
@@ -151,11 +157,20 @@ export default function SigilCanvas({ seed }: SigilCanvasProps) {
       ctx.beginPath()
       ctx.arc(150, 0, 4, 0, Math.PI * 2)
       ctx.fill()
+
+      ctx.strokeStyle = "rgba(0,0,0,0.35)"
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.arc(-150, 0, 5.5, 0, Math.PI * 2)
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.arc(150, 0, 5.5, 0, Math.PI * 2)
+      ctx.stroke()
     }
 
     function drawBoundary(ctx: CanvasRenderingContext2D) {
-      ctx.strokeStyle = "rgba(0,0,0,0.2)"
-      ctx.lineWidth = 1.5
+      ctx.strokeStyle = "rgba(0,0,0,0.35)"
+      ctx.lineWidth = 1.8
 
       ctx.beginPath()
       ctx.arc(0, 0, 300, 0, Math.PI * 2)
