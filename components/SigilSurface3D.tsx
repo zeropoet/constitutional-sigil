@@ -17,8 +17,6 @@ export default function SigilSurface3D({ seed }: SigilSurface3DProps) {
     const mountEl = mountRef.current
     if (!mountEl) return
 
-    const width = 800
-    const height = 800
     const radius = 160
     const segments = 200
     const energy = createEnergy(seed)
@@ -26,14 +24,43 @@ export default function SigilSurface3D({ seed }: SigilSurface3DProps) {
     const scene = new THREE.Scene()
     scene.background = new THREE.Color(0xffffff)
 
-    const camera = new THREE.OrthographicCamera(-250, 250, 250, -250, 1, 1000)
+    const viewHalf = 320
+    const camera = new THREE.OrthographicCamera(
+      -viewHalf,
+      viewHalf,
+      viewHalf,
+      -viewHalf,
+      1,
+      1000
+    )
     camera.position.set(185, 185, 260)
     camera.lookAt(0, 0, 0)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true })
-    renderer.setSize(width, height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+    renderer.domElement.style.width = "100%"
+    renderer.domElement.style.height = "100%"
+    renderer.domElement.style.display = "block"
     mountEl.replaceChildren()
     mountEl.appendChild(renderer.domElement)
+
+    const resizeRenderer = () => {
+      const width = Math.max(1, mountEl.clientWidth)
+      const height = Math.max(1, mountEl.clientHeight)
+      const size = Math.min(width, height)
+
+      camera.left = -viewHalf
+      camera.right = viewHalf
+      camera.top = viewHalf
+      camera.bottom = -viewHalf
+      camera.updateProjectionMatrix()
+
+      renderer.setSize(size, size)
+    }
+    resizeRenderer()
+
+    const resizeObserver = new ResizeObserver(resizeRenderer)
+    resizeObserver.observe(mountEl)
 
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableZoom = false
@@ -41,7 +68,7 @@ export default function SigilSurface3D({ seed }: SigilSurface3DProps) {
     controls.enableDamping = true
     controls.dampingFactor = 0.05
     controls.autoRotate = true
-    controls.autoRotateSpeed = 1.8
+    controls.autoRotateSpeed = 1.2
 
     const modelGroup = new THREE.Group()
     scene.add(modelGroup)
@@ -97,7 +124,7 @@ export default function SigilSurface3D({ seed }: SigilSurface3DProps) {
 
       modelGroup.rotation.x = Math.sin(t * 0.35) * 0.14
       modelGroup.rotation.y = Math.cos(t * 0.4) * 0.14
-      modelGroup.rotation.z = -t * 0.12
+      modelGroup.rotation.z = 0
 
       controls.update()
       renderer.render(scene, camera)
@@ -116,11 +143,23 @@ export default function SigilSurface3D({ seed }: SigilSurface3DProps) {
       anchorGeom.dispose()
       anchorMat.dispose()
       renderer.dispose()
+      resizeObserver.disconnect()
       if (mountEl.contains(renderer.domElement)) {
         mountEl.removeChild(renderer.domElement)
       }
     }
   }, [seed])
 
-  return <div ref={mountRef} />
+  return (
+    <div
+      ref={mountRef}
+      style={{
+        width: "min(94vw, 94dvh)",
+        height: "min(94vw, 94dvh)",
+        aspectRatio: "1 / 1",
+        maxWidth: 800,
+        maxHeight: 800
+      }}
+    />
+  )
 }

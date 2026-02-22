@@ -14,24 +14,44 @@ export default function SigilCanvas({ seed }: SigilCanvasProps) {
   useEffect(() => {
     const canvas = ref.current!
     const ctx = canvas.getContext("2d")!
-    const width = canvas.width
-    const height = canvas.height
-    const cx = width / 2
-    const cy = height / 2
     const energy = createEnergy(seed)
+    const baseSize = 800
 
     let t = 0
     let rafId = 0
 
+    const resizeCanvas = () => {
+      const parent = canvas.parentElement
+      if (!parent) return
+      const size = Math.max(1, Math.min(parent.clientWidth, parent.clientHeight))
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      canvas.width = Math.round(size * dpr)
+      canvas.height = Math.round(size * dpr)
+      canvas.style.width = `${size}px`
+      canvas.style.height = `${size}px`
+    }
+
+    resizeCanvas()
+    const resizeObserver = new ResizeObserver(resizeCanvas)
+    if (canvas.parentElement) {
+      resizeObserver.observe(canvas.parentElement)
+    }
+
     function render() {
       t += 0.008
 
+      const width = canvas.width
+      const height = canvas.height
+      const scale = Math.min(width, height) / baseSize
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.clearRect(0, 0, width, height)
       ctx.fillStyle = "white"
       ctx.fillRect(0, 0, width, height)
 
       ctx.save()
-      ctx.translate(cx, cy)
+      ctx.translate(width / 2, height / 2)
+      ctx.scale(scale, scale)
 
       drawAxes(ctx)
       drawEnergyRings(ctx, t)
@@ -146,8 +166,21 @@ export default function SigilCanvas({ seed }: SigilCanvasProps) {
 
     return () => {
       cancelAnimationFrame(rafId)
+      resizeObserver.disconnect()
     }
   }, [seed])
 
-  return <canvas ref={ref} width={800} height={800} />
+  return (
+    <div
+      style={{
+        width: "min(94vw, 94dvh)",
+        height: "min(94vw, 94dvh)",
+        aspectRatio: "1 / 1",
+        maxWidth: 800,
+        maxHeight: 800
+      }}
+    >
+      <canvas ref={ref} width={800} height={800} style={{ width: "100%", height: "100%", display: "block" }} />
+    </div>
+  )
 }
